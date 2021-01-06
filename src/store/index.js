@@ -7,6 +7,12 @@ export default new Vuex.Store({
   state: {
     Cart: [],
   },
+  getters: {
+    getCart: state => state.Cart,
+    getCartLength: (state, getters) => {
+      return getters.getCart.length
+    }
+  },
   mutations: {
     addToCart(state, {
       product
@@ -15,9 +21,10 @@ export default new Vuex.Store({
         product);
     },
     deleteFromCart(state, {
-      index
+      product
     }) {
-      if (index >= 0)
+      let index = state.Cart.indexOf(product);
+      if (index > -1)
         state.Cart.splice(index, 1);
     }
   },
@@ -34,11 +41,9 @@ export default new Vuex.Store({
     deleteFromCart: ({
       commit
     }, {
-      index
+      product
     }) => {
-      commit('deleteFromCart', {
-        index
-      });
+      commit('deleteFromCart', product);
     }
   },
   modules: {}
