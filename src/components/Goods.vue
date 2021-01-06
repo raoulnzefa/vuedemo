@@ -45,13 +45,12 @@
               {{ selectedGood.description }}
             </b-row>
             <b-row>
-              <h2><b>$</b> {{ selectedGood.net_price }}</h2>
-            </b-row>
-
-            <b-row>
               <b-badge v-for="tag in selectedGood.tags" :key="tag">
                 {{ tag }}
               </b-badge>
+            </b-row>
+            <b-row>
+              <h2><b>$</b> {{ selectedGood.net_price|0 }}</h2>
             </b-row>
             <b-row>
               How many items do you want?
@@ -62,7 +61,14 @@
                 min="1"
                 max="5"
                 step="1"
+                v-on:change="change()"
               ></b-form-input>
+            </b-row>
+            <b-row>
+              {{ goodCount }}
+            </b-row>
+            <b-row>
+              <b>Total Price $</b>{{ (parseFloat(goodCount) * selectedGood.net_price)|0.toFixed(2) }}
             </b-row>
           </b-col>
         </b-row>
@@ -93,7 +99,7 @@ export default {
       goods: [],
       search: "",
       selectedGood: 0,
-      goodCount: '',
+      goodCount: 1,
     };
   },
   methods: {
@@ -103,11 +109,12 @@ export default {
     },
     addToCart() {
       //Cart mechanics go here
-      const good= {...this.selectedGood,count:Number(this.goodCount)}
-      this.$store.dispatch("addToCart", {
-        product: good
-      });
-
+      if (this.goodCount > 0) {
+        const good = { ...this.selectedGood, count: Number(this.goodCount) };
+        this.$store.dispatch("addToCart", {
+          product: good,
+        });
+      }
       this.hideModal();
       this.$bvToast.toast("Successfully added to cart", {
         title: "Success",
@@ -121,7 +128,8 @@ export default {
     },
     hideModal() {
       this.$bvModal.hide("detailsModal");
-      this.selectedGood=0;
+      this.selectedGood = 0;
+      this.goodCount=1;
     },
   },
   beforeCreate() {

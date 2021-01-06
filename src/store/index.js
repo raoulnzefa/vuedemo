@@ -8,9 +8,20 @@ export default new Vuex.Store({
     Cart: [],
   },
   getters: {
-    getCart: state => state.Cart,
+    getCart: state => {
+      console.log(state.Cart);
+      return state.Cart
+    },
     getCartLength: (state, getters) => {
       return getters.getCart.length
+    },
+    getTotalPrice: (state) => {
+      let total = 0;
+      for (let index = 0; index < state.Cart.length; index++) {
+        const element = state.Cart[index];
+        total += element.net_price * element.count;
+      }
+      return total.toFixed(2);
     }
   },
   mutations: {
@@ -20,10 +31,8 @@ export default new Vuex.Store({
       state.Cart.push(
         product);
     },
-    deleteFromCart(state, {
-      product
-    }) {
-      let index = state.Cart.indexOf(product);
+    deleteFromCart(state, product) {
+      const index = state.Cart.indexOf(product);
       if (index > -1)
         state.Cart.splice(index, 1);
     }
@@ -43,6 +52,7 @@ export default new Vuex.Store({
     }, {
       product
     }) => {
+      console.log(commit, product);
       commit('deleteFromCart', product);
     }
   },
